@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-uae:uae-data-sharing` generates a Data Sharing Agreement under the UAE Government Services Data Sharing Policy ("collect once, use securely"). Captures the collect-once mapping, federation / API plan, and PDPL lawful basis per share.
+`/arckit:uae-data-sharing` generates a Data Sharing Agreement under the UAE Government Services Data Sharing Policy ("collect once, use securely"). Captures the collect-once mapping, federation / API plan, and PDPL lawful basis per share.
 
 ---
 
@@ -11,9 +11,9 @@
 | Artefact | Purpose |
 |----------|---------|
 | Requirements (`ARC-<id>-REQ-v1.0.md`) | Cross-entity flows in scope |
-| Integration spec (`ARC-<id>-INT-v1.0.md`) | Existing integration surface |
-| Data requirements (`ARC-<id>-DR-v1.0.md`) | Per-share data categories |
-| Data model (`ARC-<id>-DMOD-v1.0.md`) | Entity-level structure |
+| Integration spec (`INT-*` in `ARC-<id>-REQ-v*.md`) | Existing integration surface |
+| Data requirements (`DR-*` in `ARC-<id>-REQ-v*.md`) | Per-share data categories |
+| Data model (`ARC-<id>-DATA-v*.md`) | Entity-level structure |
 | Smart Data Classification Register (`ARC-<id>-CLAS-v*.md`) | Per-share sensitivity |
 | PDPL assessment (`ARC-<id>-PDPL-v*.md`) | Lawful-basis register |
 
@@ -22,7 +22,7 @@
 ## Command
 
 ```bash
-/arckit-uae:uae-data-sharing <project ID or service name>
+/arckit:uae-data-sharing <project ID or service name>
 ```
 
 Output: `projects/<id>/ARC-<id>-DSHR-v1.0.md`
@@ -58,10 +58,10 @@ Output: `projects/<id>/ARC-<id>-DSHR-v1.0.md`
 
 | Phase | Key Activities | ArcKit Commands |
 |-------|----------------|-----------------|
-| Privacy | PDPL baseline + lawful basis | `/arckit-uae:uae-pdpl` |
-| Classification | Per-dataset Smart Data tags | `/arckit-uae:uae-classification` |
-| Sharing | Data Sharing Agreement | `/arckit-uae:uae-data-sharing` |
-| Integration | Federation / API contracts | `/arckit:integration` |
+| Privacy | PDPL baseline + lawful basis | `/arckit:uae-pdpl` |
+| Classification | Per-dataset Smart Data tags | `/arckit:uae-classification` |
+| Sharing | Data Sharing Agreement | `/arckit:uae-data-sharing` |
+| Integration | Federation / API contracts | `/arckit:data-mesh-contract` |
 
 ---
 

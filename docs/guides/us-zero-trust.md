@@ -2,9 +2,9 @@
 
 > **Overlay**: USA Federal Civilian Community Overlay | **ArcKit Version**: [VERSION]
 
-`/arckit-us:us-zero-trust` produces a CISA Zero Trust Maturity Model v2.0 posture assessment for the system. It scores maturity across the five pillars (Identity, Devices, Networks, Applications & Workloads, Data) and the three cross-cutting capabilities (Visibility & Analytics, Automation & Orchestration, Governance), at four maturity stages (Traditional, Initial, Advanced, Optimal). The output is anchored on CISA ZTMM v2.0, OMB M-22-09, and NIST SP 800-207.
+`/arckit:us-zero-trust` produces a CISA Zero Trust Maturity Model v2.0 posture assessment for the system. It scores maturity across the five pillars (Identity, Devices, Networks, Applications & Workloads, Data) and the three cross-cutting capabilities (Visibility & Analytics, Automation & Orchestration, Governance), at four maturity stages (Traditional, Initial, Advanced, Optimal). The output is anchored on CISA ZTMM v2.0, OMB M-22-09, and NIST SP 800-207.
 
-The assessment is the **federal civilian zero-trust evidence artefact**. M-22-09 set agency-wide zero-trust targets for FY24, and CISA ZTMM is the agreed measuring stick. The artefact is consumed by agency CIO/CISO offices reporting M-22-09 progress, by FedRAMP authorisation packages cross-referencing ZTMM claims, and by the JAB / sponsoring AO during ATO review.
+The assessment is the **federal civilian zero-trust evidence artefact**. M-22-09 set agency-wide zero-trust targets for FY24, and CISA ZTMM is the agreed measuring stick. The artefact is consumed by agency CIO/CISO offices reporting M-22-09 progress, by FedRAMP authorisation packages cross-referencing ZTMM claims, and by the sponsoring agency AO during ATO review.
 
 Reviewed by the agency CISO, ISSO, and the System Owner. Roadmap uplift items are co-owned with the agency Zero Trust Strategy Office where one exists.
 
@@ -29,10 +29,11 @@ Reviewed by the agency CISO, ISSO, and the System Owner. Roadmap uplift items ar
 
 ## Process Overview
 
-1. Score current posture for each of the 5 pillars and 3 cross-cuts across the 4 maturity stages.
+1. Score current and target posture for every ZTMM v2.0 function in the 5 pillars and the 3 cross-cuts, across the 4 maturity stages, and lay the scores out as current-state and target-state heatmaps.
 2. Cite supporting evidence — controls implemented, telemetry sources, automation in place.
 3. Identify gaps blocking the next maturity stage; capture proposed uplift initiatives with owner, timeline, and dependency.
 4. Tie the roadmap to M-22-09 milestones where they still apply, and to agency-specific ZT strategy targets.
+5. Map each ZTMM function to the NIST SP 800-53 Rev 5 controls that evidence it, and flag controls in the NIST artefact for re-tailoring.
 
 ---
 
@@ -47,7 +48,7 @@ Reviewed by the agency CISO, ISSO, and the System Owner. Roadmap uplift items ar
 ## Example Usage
 
 ```bash
-/arckit-us:us-zero-trust 001-citizen-benefits-portal
+/arckit:us-zero-trust 001-citizen-benefits-portal
 ```
 
 ---

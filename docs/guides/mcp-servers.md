@@ -10,7 +10,7 @@ This guide covers installing the ArcKit plugin, configuring MCP servers, and com
 
 ### Prerequisites
 
-- **Claude Code** v2.1.219 or later (or **Claude Cowork** desktop app)
+- **Claude Code** v2.1.319 or later (or **Claude Cowork** desktop app)
 - **Bash** shell (for helper scripts)
 
 ### Step 0: Make sure Claude Code is up to date
@@ -20,7 +20,7 @@ claude install latest
 claude --version
 ```
 
-`claude install` accepts `stable`, `latest`, or a specific version (e.g. `claude install 2.1.219`). If you don't have the `claude` CLI yet, follow the [official Claude Code install guide](https://docs.claude.com/en/docs/claude-code/quickstart) first.
+`claude install` accepts `stable`, `latest`, or a specific version (e.g. `claude install 2.1.319`). If you don't have the `claude` CLI yet, follow the [official Claude Code install guide](https://docs.claude.com/en/docs/claude-code/quickstart) first.
 
 ### Optional: Long-session prompt cache (Claude Code v2.1.108+)
 
@@ -86,7 +86,7 @@ After restart, open the plugin manager (`/plugin`) and navigate to **Installed**
 - **Commands**: ArcKit slash commands
 - **Agents**: Autonomous research agents
 - **Skills**: Reference skills (Wardley, Mermaid, PlantUML, workflow, build harness)
-- **Hooks**: SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest
+- **Hooks**: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse
 
 > **Tip**: You may see 2 MCP errors about missing API keys for Google and Data Commons. These are harmless — see [Servers Requiring API Keys](#servers-requiring-api-keys) below.
 
@@ -130,6 +130,26 @@ ArcKit includes 4 bundled MCP (Model Context Protocol) servers for cloud researc
 | Microsoft Learn | Not required | `/arckit:azure-research` | Works out of the box |
 | Google Developer Knowledge | `GOOGLE_API_KEY` | `/arckit:gcp-research` | Requires setup |
 | Data Commons | `DATA_COMMONS_API_KEY` | Data statistics lookups | Requires setup |
+| Trello (Atlassian) | None; sign in once through `/mcp` | `/arckit:trello` | Sign-in on first use |
+
+### Approving MCP tool calls
+
+ArcKit doesn't approve MCP tool calls on your behalf. The first time a research command calls a server, Claude Code asks. To stop asking for a server you trust, add it to `permissions.allow` in `.claude/settings.json` (for one project) or `~/.claude/settings.json` (for all of them):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_arckit_aws-knowledge",
+      "mcp__plugin_arckit_microsoft-learn",
+      "mcp__plugin_arckit_google-developer-knowledge",
+      "mcp__plugin_arckit_datacommons-mcp"
+    ]
+  }
+}
+```
+
+Add `"mcp__plugin_arckit_govreposcrape"` and `"mcp__plugin_arckit_uk-tenders"` only if you're content to send queries to those community-run services without being asked. Until 6.17, a hook approved all six servers automatically.
 
 ---
 
@@ -141,7 +161,8 @@ Provides access to official AWS documentation, service details, regional availab
 
 - **Type**: HTTP (remote endpoint)
 - **Commands**: `/arckit:aws-research`
-- **Tools**: `search_documentation`, `read_documentation`, `get_regional_availability`, `list_regions`, `recommend`
+- **Tools**: `search_documentation`, `read_documentation`, `get_regional_availability`, `list_regions`, `retrieve_skill`
+- **Compared with AWS's other documentation servers**: see [AWS documentation MCP servers](aws-documentation-mcp.md)
 - **Setup**: None — works immediately after plugin installation
 
 ### Microsoft Learn
@@ -163,19 +184,20 @@ Provides access to Google Cloud documentation for GCP service research.
 
 - **Type**: HTTP (remote endpoint)
 - **Commands**: `/arckit:gcp-research`
-- **Tools**: `search_documents`, `get_document`, `batch_get_documents`
+- **Tools**: `search_documents`, `get_documents`, `answer_query` (Google replaced `get_document` and `batch_get_documents` with `get_documents` on 8 March 2026)
 
 **Setup**:
 
-1. Get a free API key from [Google AI Studio](https://aistudio.google.com/apikey) or the [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-2. Set the environment variable:
+1. In the [Google Cloud Console](https://console.cloud.google.com/apis/credentials), enable the Developer Knowledge API for your project, create an API key, and restrict the key to that API (see Google's [Developer Knowledge MCP setup](https://developers.google.com/knowledge/mcp))
+2. **Claude Code:** the ArcKit plugin asks for the key when you enable it, as a sensitive setting kept in your system keychain. To add or change it later, open `/plugin`, choose **arckit**, and open its configure screen (or run `claude plugin configure arckit` on Claude Code v2.1.285+). ArcKit passes it to the server in a request header; it isn't written to any file.
+3. **Other assistants** (Codex CLI, Gemini CLI, OpenCode, GitHub Copilot, Kimi, Mistral Vibe) read it from the environment instead:
 
 ```bash
 # Add to your shell profile (~/.bashrc, ~/.zshrc, etc.)
 export GOOGLE_API_KEY="your-api-key-here"
 ```
 
-3. Restart Claude Code
+4. Restart your assistant
 
 ### Data Commons
 
@@ -188,14 +210,15 @@ Provides access to public statistical data from Data Commons (demographics, econ
 **Setup**:
 
 1. Get an API key from [Data Commons](https://datacommons.org)
-2. Set the environment variable:
+2. **Claude Code:** the ArcKit plugin asks for the key when you enable it, as a sensitive setting kept in your system keychain. To add or change it later, open `/plugin`, choose **arckit**, and open its configure screen (or run `claude plugin configure arckit` on Claude Code v2.1.285+). ArcKit passes it to the server in a request header; it isn't written to any file.
+3. **Other assistants** (Codex CLI, Gemini CLI, OpenCode, GitHub Copilot, Kimi, Mistral Vibe) read it from the environment instead:
 
 ```bash
 # Add to your shell profile (~/.bashrc, ~/.zshrc, etc.)
 export DATA_COMMONS_API_KEY="your-api-key-here"
 ```
 
-3. Restart Claude Code
+4. Restart your assistant
 
 > **Your keys stay hidden in `claude mcp` output.** Both keyed servers carry their key in an HTTP header (`X-Goog-Api-Key`, `X-API-Key`) via `${GOOGLE_API_KEY}` / `${DATA_COMMONS_API_KEY}`. As of Claude Code v2.1.161, `claude mcp list` / `get` / `add` no longer expand `${VAR}` references and redact credential headers and URL secrets — so inspecting your MCP config (or screen-sharing it) won't leak the keys. Relevant for OFFICIAL-SENSITIVE / regulated deployments. The other four bundled servers are keyless, so there's nothing to redact.
 
@@ -209,9 +232,10 @@ claude mcp login <server-name>
 claude mcp logout <server-name>
 ```
 
-ArcKit's bundled keyed servers still use environment variables, but the same
-`claude mcp` workflow is useful when you add third-party MCP servers alongside
-ArcKit. Recent Claude Code releases improved OAuth retries and headless login
+ArcKit's bundled Trello server uses this flow: sign in once through `/mcp`
+(or `claude mcp login`). The two keyed servers use plugin settings instead (see
+above), and the same `claude mcp` workflow is useful when you add third-party
+MCP servers alongside ArcKit. Recent Claude Code releases improved OAuth retries and headless login
 flows, so stale browser hand-offs are less likely to leave a server half
 configured.
 
@@ -241,10 +265,11 @@ Invalid MCP server config for 'datacommons-mcp': Missing environment variables: 
 2. Restart Claude Code (MCP servers load at startup)
 3. Check the plugin UI — errors should disappear once the key is valid
 4. Run `claude mcp list` or `/mcp`. As of Claude Code v2.1.218 a failed server reports its **HTTP status and error text**, so an invalid key shows as a real `401` rather than a bare "failed to connect". The same release warns about config values carrying hidden leading or trailing whitespace — a common cause of a key that looks correct but is rejected.
+5. On Amazon Bedrock, Google Vertex AI and Microsoft Foundry — and in any session with telemetry disabled — Claude Code v2.1.246+ tells the model when a configured server failed to connect. Before that the model concluded the server's tools did not exist, so a keyless session on those providers made `/arckit:gcp-research` and Data Commons lookups fail with a confusing "no such tool" instead of a connection error. If you see that symptom, update the client and re-check `/mcp`.
 
 ### API key works but commands fail
 
-- **Google**: Ensure the API key has the "Generative Language API" enabled in Google Cloud Console
+- **Google**: Ensure the Developer Knowledge API is enabled for the key's project and included in the key's API restrictions; otherwise requests fail with "403 API target restriction"
 - **Data Commons**: Ensure the key is active and not rate-limited
 
 ---
@@ -347,8 +372,8 @@ For detailed workflows and real-world examples, see the [Architecture Productivi
 ## Resources
 
 - [AWS Knowledge MCP](https://awslabs.github.io/mcp/servers/aws-knowledge-mcp-server) — AWS documentation server
-- [Microsoft Learn MCP](https://learn.microsoft.com/api/mcp) — Azure documentation server
-- [Google Developer Knowledge MCP](https://developerknowledge.googleapis.com/mcp) — Google Cloud documentation server
+- [Microsoft Learn MCP](https://learn.microsoft.com/training/support/mcp) — Azure documentation server (see also [Microsoft Learn MCP server](microsoft-learn-mcp.md))
+- [Google Developer Knowledge MCP](https://developers.google.com/knowledge/mcp) — Google Cloud documentation server
 - [Data Commons](https://datacommons.org) — Public statistical data
 - [Model Context Protocol](https://modelcontextprotocol.io/) — MCP specification
 - [Anthropic Skills](https://github.com/anthropics/skills) — Document skills (PDF, DOCX, PPTX, XLSX)

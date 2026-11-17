@@ -11,11 +11,11 @@ ArcKit's Claude Code plugin includes automation hooks across 10 event types. Hoo
 | **SessionStart** | arckit-session, version-check, v5-migration-banner, notify-stale-artifacts | Session start, resume, clear, compact |
 | **Stop** | session-learner | Session ends normally |
 | **StopFailure** | session-learner | Session ends with error |
-| **UserPromptSubmit** | arckit-context, secret-detection, sync-guides, graph-inject | Every user message and matched ArcKit commands |
-| **PreToolUse** | allow-plugin-internals, inject-agent-context, validate-arc-filename, score-validator, validate-wardley-math, file-protection, secret-file-scanner | Before selected tool calls |
+| **UserPromptSubmit** | arckit-context, secret-detection, supplier-isolation, sync-guides, graph-inject | Every user message and matched ArcKit commands |
+| **SubagentStart** | inject-agent-context | An ArcKit subagent starts (not readers or writers) |
+| **PreToolUse** | validate-reader-handoff (SubagentHandback), supplier-isolation, validate-arc-filename, score-validator, validate-wardley-math, file-protection, secret-file-scanner | Before selected tool calls |
 | **PostToolUse** | update-manifest, provenance-stamp, tidy-wardley-labels, telemetry | After selected tool calls |
 | **TaskCreated** | telemetry | When an agent task is created |
-| **PermissionRequest** | allow-mcp-tools | MCP tool permission prompt |
 | **FileChanged** | external-context-watch | Watched external documents change |
 | **PostCompact** | postcompact-rehydrate | After context compaction |
 
@@ -90,11 +90,15 @@ Validates that files written to `projects/` follow the ARC naming convention (`A
 - Multi-instance types (ADR, DIAG, etc.) have sequence numbers
 - File goes in the correct subdirectory (e.g., ADRs in `decisions/`)
 
-Blocks the write with a corrected filename suggestion if invalid.
+Blocks the write if invalid, and the reason names the corrected path, with the next sequence number and the right subfolder already worked out. Claude then writes the same content there. The hook never changes the write itself.
 
 ### score-validator (Write)
 
-Validates scoring/assessment documents for numeric consistency. Checks that individual scores match totals, percentages are calculated correctly, and rating scales are applied consistently.
+Checks `vendors/scores.json` before it is written. Invalid JSON is blocked. A score outside 0–3, weights that don't sum to about 1.0, missing evidence, or an integrity finding holding anything but a type, file and location is reported to the model as a warning.
+
+### supplier-isolation (Read | Grep | Bash | PowerShell)
+
+While `/arckit:evaluate` or `/arckit:score` runs, only their reader can open a supplier's documents under `vendors/`, so a bid's raw text never reaches the context that scores it. `scores.json` and vendor profiles stay readable. The gate stays on until you run another `/command` or clear the session, so `/arckit:hld-review` still reads supplier designs as normal.
 
 ### file-protection (Edit | Write)
 
@@ -103,6 +107,12 @@ Blocks writes to sensitive file paths — environment files (`.env`), credential
 ### secret-file-scanner (Edit | Write)
 
 Scans the content being written for embedded secret patterns. Catches cases where a secret is embedded in an otherwise safe file path. See the [Security Hooks Guide](security-hooks.md) for details.
+
+## SubagentStart Hooks
+
+### inject-agent-context
+
+When an ArcKit subagent starts, such as the framework agent, it gets the same project context your own prompts get: the projects, their artefacts, vendor profiles, external documents and global policies. Reader and writer subagents are left out, because they take strict JSON. Other plugins' agents and Claude Code's own agents are never touched.
 
 ## PostToolUse Hooks
 
@@ -129,11 +139,15 @@ Re-injects the same project inventory used by `arckit-context` after manual or
 automatic compaction so dynamic project state is not lost from the context
 window.
 
-## PermissionRequest Hooks
+## Permissions
 
-### allow-mcp-tools
+No ArcKit hook approves a permission request. Each command and skill declares what it needs in its own `allowed-tools` frontmatter, and Claude Code applies those rules only while it runs.
 
-Auto-allows MCP tool calls from ArcKit's bundled MCP servers (AWS Knowledge, Microsoft Learn, Google Developer Knowledge, DataCommons, govreposcrape, uk-tenders) so users don't need to approve each one manually.
+- **ArcKit's own files** (templates, references, schemas) are pre-approved for reading by `Read(/${CLAUDE_PLUGIN_ROOT}/**)`, because every command reads its templates from the plugin's install directory, outside your project.
+
+- **ArcKit's own scripts** (document IDs, project creation, Wardley rendering, OKF import and export) are pre-approved by each command's `allowed-tools` rules. Claude Code checks those per command, so a script call chained to anything else still asks.
+- **MCP tool calls** ask the first time. To stop the prompts for a server you trust, add it to `permissions.allow` in your settings, for example `"mcp__plugin_arckit_aws-knowledge"` or `"mcp__plugin_arckit_microsoft-learn"`.
+- **Research reader output** is checked by `validate-reader-handoff` (PostToolUse on `Agent`, and PreToolUse on `SubagentHandback` in auto mode), with no shell command and no permission.
 
 ## Utility Files
 

@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-agent-architecture:agent-maturity` assesses an AI agent programme across design, governance, security, integration, and operations. It produces a current-state maturity view, target maturity, improvement roadmap, benchmarks, and traceability.
+`/arckit:agent-maturity` assesses an AI agent programme across design, governance, security, integration, and operations. It produces a current-state maturity view, target maturity, improvement roadmap, benchmarks, and traceability.
 
 ---
 
@@ -23,7 +23,7 @@
 ## Command
 
 ```bash
-/arckit-agent-architecture:agent-maturity <project ID or agent programme>
+/arckit:agent-maturity <project ID or agent programme>
 ```
 
 Output: `projects/<id>/ARC-<id>-AAMT-v1.0.md`
@@ -62,7 +62,7 @@ Output: `projects/<id>/ARC-<id>-AAMT-v1.0.md`
 | Current State Assessment | Level, evidence, gaps, and risk per dimension |
 | Target State | Target level and rationale per dimension |
 | Improvement Roadmap | Initiatives, owners, timeline, dependencies, success criteria |
-| Benchmarks | Industry, regulatory, and peer comparisons |
+| Benchmarks | Cited industry, regulatory, and peer comparisons, each on the reference's own scale |
 | Traceability | Links to inventory, design, governance, security, integration, and roadmap artefacts |
 
 ---
@@ -73,12 +73,13 @@ Output: `projects/<id>/ARC-<id>-AAMT-v1.0.md`
 - Target levels are realistic for the investment and timeline.
 - Each improvement initiative has owner, success criteria, and dependency notes.
 - Security and governance maturity are not averaged away by strong design maturity.
-- Roadmap actions feed back into `/arckit-agent-architecture:agent-design`, `/arckit-agent-architecture:agent-governance`, and `/arckit-agent-architecture:agent-security`.
+- Every benchmark cites its source, or says "No cited benchmark". NIST AI RMF and the OWASP Top 10 for LLM Applications define no maturity levels, so they are compared by Current and Target Profile and by risk coverage, not given a level.
+- Roadmap actions feed back into `/arckit:agent-design`, `/arckit:agent-governance`, and `/arckit:agent-security`.
 
 ---
 
 ## Related Commands
 
 - `/arckit:maturity-model` - Assess wider enterprise architecture maturity.
-- `/arckit-agent-architecture:agent-design` - Address design maturity gaps.
-- `/arckit-agent-architecture:agent-governance` - Address governance maturity gaps.
+- `/arckit:agent-design` - Address design maturity gaps.
+- `/arckit:agent-governance` - Address governance maturity gaps.

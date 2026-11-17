@@ -2,9 +2,9 @@
 
 > **Overlay**: USA Federal Civilian Community Overlay | **ArcKit Version**: [VERSION]
 
-`/arckit-us:us-nist-800-53` generates a tailored NIST SP 800-53 Revision 5 control set for the system, starting from the SP 800-53B baseline (Low / Moderate / High / Privacy) keyed to the system's FIPS 199 categorization. It documents parameter assignments, tailoring decisions (adds, removes, scoping statements), inheritance from FedRAMP-authorised Cloud Service Providers (CSPs), and compensating controls where the baseline implementation is not feasible.
+`/arckit:us-nist-800-53` generates a tailored NIST SP 800-53 Revision 5 control set for the system, starting from the SP 800-53B baseline (Low / Moderate / High / Privacy) keyed to the system's FIPS 199 categorization. It documents parameter assignments, tailoring decisions (adds, removes, scoping statements), inheritance from FedRAMP-authorised Cloud Service Providers (CSPs), and compensating controls where the baseline implementation is not feasible.
 
-The output is the **control selection artefact** that feeds the FedRAMP System Security Plan (SSP) and the agency Authority-to-Operate (ATO) package. It is the foundation for assessment procedures (SP 800-53A Rev 5), POA&M management, and continuous monitoring (`/arckit-us:us-fedramp-readiness`, `/arckit-us:us-zero-trust`).
+The output is the **control selection artefact** that feeds the FedRAMP System Security Plan (SSP) and the agency Authority-to-Operate (ATO) package. It is the foundation for assessment procedures (SP 800-53A Rev 5), POA&M management, and continuous monitoring (`/arckit:us-fedramp-readiness`, `/arckit:us-zero-trust`).
 
 Reviewed by the ISSO, System Owner, Common Control Provider (CCP) representatives, and the Authorizing Official. Privacy controls are reviewed by the agency Senior Agency Official for Privacy (SAOP).
 
@@ -41,14 +41,14 @@ Reviewed by the ISSO, System Owner, Common Control Provider (CCP) representative
 
 - **NIST SP 800-53 Rev 5** — <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r5.pdf>
 - **NIST SP 800-53B (Control Baselines)** — <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53B.pdf>
-- **FedRAMP Rev 5 Baselines** — <https://www.fedramp.gov/rev5/baselines/>
+- **FedRAMP Rev 5 Baselines** (per-control applicability for Classes B–D in the Full Rev5 Control Reference) — <https://www.fedramp.gov/2026/reference/controls/>
 
 ---
 
 ## Example Usage
 
 ```bash
-/arckit-us:us-nist-800-53 001-citizen-benefits-portal
+/arckit:us-nist-800-53 001-citizen-benefits-portal
 ```
 
 ---

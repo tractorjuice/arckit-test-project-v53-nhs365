@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-eu:eu-cra` generates a Cyber Resilience Act (Regulation EU 2024/2847) compliance assessment for products with digital elements placed on the EU market. Full obligations apply from **11 December 2027**.
+`/arckit:eu-cra` generates a Cyber Resilience Act (Regulation EU 2024/2847) compliance assessment for products with digital elements placed on the EU market. Full obligations apply from **11 December 2027**.
 
 ---
 
@@ -19,8 +19,10 @@
 ## Command
 
 ```bash
-/arckit-eu:eu-cra Assess CRA compliance for <product description and classification>
+/arckit:eu-cra Assess CRA compliance for <product description and classification>
 ```
+
+In Claude Code the overlay installs as its own plugin, `arckit-eu`, so the command is `/arckit-eu:eu-cra`.
 
 Output: `projects/<id>/ARC-<id>-CRA-v1.0.md`
 
@@ -63,9 +65,9 @@ No known exploitable vulnerabilities at placement · Secure-by-default configura
 |-------|----------------|-----------------|
 | Discovery | Product description and market | `/arckit:requirements` |
 | Risk | Security and vulnerability risks | `/arckit:risk` |
-| Assessment | CRA compliance assessment | `/arckit-eu:eu-cra` |
+| Assessment | CRA compliance assessment | `/arckit:eu-cra` |
 | Security controls | Implement Annex I requirements | `/arckit:secure` |
-| NIS2 | If used by essential entities | `/arckit-eu:eu-nis2` |
+| NIS2 | If used by essential entities | `/arckit:eu-nis2` |
 
 ---
 

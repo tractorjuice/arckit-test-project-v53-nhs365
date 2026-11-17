@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-agent-architecture:agent-security` creates an Agent Security Architecture covering threat model, sandboxing, tool permissions, data handling, prompt-injection defences, output validation, secret management, incident response, and traceability.
+`/arckit:agent-security` creates an Agent Security Architecture covering threat model, sandboxing, tool permissions, data handling, prompt-injection defences, output validation, secret management, incident response, and traceability.
 
 ---
 
@@ -23,7 +23,7 @@
 ## Command
 
 ```bash
-/arckit-agent-architecture:agent-security <agent or project ID>
+/arckit:agent-security <agent or project ID>
 ```
 
 Output: `projects/<id>/ARC-<id>-AASE-v1.0.md`
@@ -58,6 +58,6 @@ Output: `projects/<id>/ARC-<id>-AASE-v1.0.md`
 
 ## Related Commands
 
-- `/arckit-agent-architecture:agent-governance` - Align security controls with oversight model.
+- `/arckit:agent-governance` - Run before this command. Its oversight tiers and compliance requirements inform the controls.
 - `/arckit:secure` - Produce wider Secure by Design evidence.
-- `/arckit-agent-architecture:agent-integration` - Secure communication between agents.
+- `/arckit:agent-integration` - Run next. It designs inter-agent communication within these controls.

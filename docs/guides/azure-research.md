@@ -4,7 +4,9 @@
 
 `/arckit:azure-research` researches Azure services, architecture patterns, and implementation guidance using the Microsoft Learn MCP server for authoritative documentation.
 
-> **Agent Architecture**: This command runs as an autonomous agent via the Task tool. The agent makes 15-30+ MCP calls to gather Azure documentation in its own context window, keeping the main conversation clean. The slash command is a thin wrapper that delegates to the agent.
+The research runs on the Microsoft Learn MCP server: see [Microsoft Learn MCP server](microsoft-learn-mcp.md).
+
+> **How the command runs**: `/arckit:azure-research` runs in your main session and sends a reader subagent to each research category. Only the readers call the MCP server, so the documentation they gather stays in their own context windows. A writer subagent with no network tools then renders the report.
 
 ---
 
@@ -12,24 +14,9 @@
 
 ### Microsoft Learn MCP Server (REQUIRED)
 
-This command **requires** the Microsoft Learn MCP server to be installed. It will not work without it.
+This command **requires** the Microsoft Learn MCP server. It will not work without it.
 
-**Installation**:
-
-Add to your Claude Code MCP configuration (`~/.claude/claude_desktop_config.json` or project `.mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "microsoft-docs": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-microsoft-docs"]
-    }
-  }
-}
-```
-
-After installation, restart Claude Code to load the MCP server.
+**Setup**: none. The ArcKit plugin already includes the server, at `https://learn.microsoft.com/api/mcp`, and it needs no key or sign-in. To add it to an assistant without ArcKit, see [Add it to your assistant](microsoft-learn-mcp.md#add-it-to-your-assistant).
 
 **Slow corporate network?** On TLS-inspecting proxies, VPN tunnels, or congested links, large-scope research prompts can exceed Claude Code's default per-request fetch timeout. Set `MCP_TOOL_TIMEOUT=300000` (5 minutes, in milliseconds) before launching Claude — see [MCP per-request timeout](mcp-servers.md#optional-mcp-per-request-timeout-claude-code-v21142) in the MCP setup guide. Requires Claude Code v2.1.142+.
 
@@ -76,7 +63,7 @@ Outputs: `projects/<id>/research/ARC-<id>-AZRS-v1.0.md`
 claude remote-control
 ```
 
-Drive the session from claude.ai/code or the mobile app, then enable `/config → Push when Claude decides` so your phone gets a notification on completion or when the agent reaches a decision point (service shortlist confirmation, region selection). ArcKit's minimum Claude Code floor (v2.1.219) already covers the v2.1.110 RC requirement.
+Drive the session from claude.ai/code or the mobile app, then enable `/config → Push when Claude decides` so your phone gets a notification on completion or when the agent reaches a decision point (service shortlist confirmation, region selection). ArcKit's minimum Claude Code floor (v2.1.319) already covers the v2.1.110 RC requirement.
 
 Caveats: Pro/Max plans only (no API keys, no Bedrock/Vertex/Foundry), push is a single on/off so chatty agents can over-notify, and the local `claude` process must keep running.
 
@@ -136,14 +123,14 @@ When UK Government project detected:
 |---------|-------------------|-------------------------|
 | Scope | Multi-cloud, SaaS, open-source | Azure-specific only |
 | Source | Web search, multiple sources | Microsoft Learn MCP (authoritative) |
-| Depth | Build vs buy analysis | Deep Azure service analysis |
+| Depth | Market options, checked facts and costs | Deep Azure service analysis |
 | Compliance | General UK Gov | Azure-specific UK compliance |
 | Code samples | Limited | Bicep, Terraform, SDKs |
 | Cost estimates | High-level | Detailed Azure pricing |
 
 **When to use which**:
 
-- Use `/arckit:research` for cloud-agnostic evaluation or build vs buy
+- Use `/arckit:research` for cloud-agnostic market options and costs
 - Use `/arckit:azure-research` when Azure is the target platform
 
 ---
