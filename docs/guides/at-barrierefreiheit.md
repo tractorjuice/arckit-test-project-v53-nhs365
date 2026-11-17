@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-at:at-barrierefreiheit` assesses Austrian digital accessibility obligations across the country's **two separate transposition tracks**, determines which apply, and produces a conformance assessment with a remediation roadmap.
+`/arckit:at-barrierefreiheit` assesses Austrian digital accessibility obligations across the country's **two separate transposition tracks**, determines which apply, and produces a conformance assessment with a remediation roadmap.
 
 - **BaFG** — *Bundesgesetz über Barrierefreiheitsanforderungen für Produkte und Dienstleistungen*, BGBl. I Nr. 76/2023, applicable since **28 June 2025**. Transposes Directive (EU) 2019/882, the **European Accessibility Act**. Binds manufacturers, importers, distributors and service providers.
 - **WZG** — *Web-Zugänglichkeits-Gesetz*, BGBl. I Nr. 59/2019, in force **23 July 2019**. Transposes Directive (EU) 2016/2102. Binds federal public bodies for their websites and mobile applications.
@@ -26,7 +26,7 @@ An entity can be subject to both. A federal body running an in-scope e-commerce 
 ## Command
 
 ```bash
-/arckit-at:at-barrierefreiheit <project ID or entity/service description>
+/arckit:at-barrierefreiheit <project ID or entity/service description>
 ```
 
 Output: `projects/<id>/ARC-<id>-ATBFR-v1.0.md`
@@ -64,9 +64,9 @@ Output: `projects/<id>/ARC-<id>-ATBFR-v1.0.md`
 | Phase | Key Activities | ArcKit Commands |
 |-------|----------------|-----------------|
 | Requirements | Capture NFR-UX accessibility targets | `/arckit:requirements` |
-| Applicability and conformance | Determine tracks, assess EN 301 549 | `/arckit-at:at-barrierefreiheit` |
-| Remediation procurement | Carry the target into the tender | `/arckit-at:at-bvergg` |
-| Feedback-channel privacy | Where the channel collects personal data | `/arckit-at:at-dsgvo` |
+| Applicability and conformance | Determine tracks, assess EN 301 549 | `/arckit:at-barrierefreiheit` |
+| Remediation procurement | Carry the target into the tender | `/arckit:at-bvergg` |
+| Feedback-channel privacy | Where the channel collects personal data | `/arckit:at-dsgvo` |
 | Traceability | Link gaps back to requirements | `/arckit:traceability` |
 
 ---
@@ -101,6 +101,6 @@ Output: `projects/<id>/ARC-<id>-ATBFR-v1.0.md`
 
 ## Key Notes
 
-- **Standard version**: EN 301 549 **v3.2.1** is the version cited in the *Official Journal*, so it is what carries the presumption of conformity under both Directives, and it normatively references **WCAG 2.1 AA**. Draft v4.1.0 went to public review in November 2025; final **v4.1.1**, expected to carry WCAG 2.2 AA, is anticipated to be OJ-cited around **October 2026** `[NEEDS VERIFICATION]`. This matches the position `/arckit-at:at-bvergg` takes on §107 BVergG, and it differs from the UK, where SI 2022/1097 made the WCAG reference rolling and 2.2 AA is already the monitored target.
-- **Paragraph references**: the BaFG § numbers used by this command (§ 3 Z 19 definition, § 6 exemption, § 21 surveillance, § 36 penalties) are drawn from secondary sources because RIS was unavailable at authoring time. Confirm against RIS before external reliance.
-- **Scope of this command**: the entity's own products, services, websites and apps. Accessibility as a *procurement clause* (§107 BVergG) is `/arckit-at:at-bvergg`.
+- **Standard version**: EN 301 549 **v3.2.1** is the version cited in the *Official Journal*, so it is what carries the presumption of conformity under both Directives, and it normatively references **WCAG 2.1 AA**. Draft v4.1.0 went to public review in November 2025; final **v4.1.1**, expected to carry WCAG 2.2 AA, is anticipated to be OJ-cited around **October 2026** `[NEEDS VERIFICATION]`. This matches the position `/arckit:at-bvergg` takes on §107 BVergG, and it differs from the UK, where SI 2022/1097 made the WCAG reference rolling and 2.2 AA is already the monitored target.
+- **Paragraph references**: the BaFG § numbers used by this command (§ 3 Z 19 definition, § 6 exemption, § 21 surveillance, § 24 Abs. 2 exemption evidence, § 36 penalties) were checked against the consolidated BaFG in RIS on 27 October 2026; the Act had not been amended since BGBl. I Nr. 76/2023. § 36 sets three tiers by type of breach, up to EUR 80,000, 40,000 and 16,000, lowered to EUR 50,000, 25,000 and 10,000 for microenterprises and SMEs. Check RIS for later amendments before external reliance.
+- **Scope of this command**: the entity's own products, services, websites and apps. Accessibility as a *procurement clause* (§107 BVergG) is `/arckit:at-bvergg`.

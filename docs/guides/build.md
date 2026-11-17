@@ -30,8 +30,8 @@ Running `/arckit:requirements` then `/arckit:risk` then `/arckit:tcop`… sequen
 | `--refresh NAME` | Force-rebuild `NAME` and everything downstream |
 | `--no-commit` | Skip the per-wave git commit |
 | `--recipe NAME` | Recipe to use; default `uk-saas` |
-| `--enable ID` | Enable an optional target (e.g. `--enable AIP`) |
-| `--exclude ID` | Exclude a default-on optional target (e.g. `--exclude SVCASS`) |
+| `--enable ID` | Build an optional target (e.g. `--enable AIP`), even when the project already has an artefact of its type; existing evidence is then not adopted |
+| `--exclude ID` | Exclude an optional target: neither build it nor read an existing one (e.g. `--exclude SVCASS`) |
 
 ## Built-in recipes
 
@@ -45,37 +45,45 @@ Recipes ship at `${CLAUDE_PLUGIN_ROOT}/skills/arckit-build/recipes/{name}.yaml`.
 ## How it works
 
 1. **Recipe loaded** from `.arckit/recipes/{name}.yaml` if present, else `${CLAUDE_PLUGIN_ROOT}/skills/arckit-build/recipes/{name}.yaml`
-2. **Optional-target filter** applied (`--enable` / `--exclude` / recipe defaults)
+2. **Optional-target filter** applied (`--enable` / `--exclude` / recipe defaults). An optional target that is off by default but whose artefact already exists in the project is **adopted**: it is never built, and the targets that depend on it read the existing artefact (every instance's latest version, for a multi-instance type such as codebase audits). Only an optional target with no existing artefact, or one named in `--exclude`, is dropped from its dependents' inputs. A recipe can therefore read an existing backlog or audit without ever generating one. Adopted evidence is hashed like any other input, so a changed, added or removed instance makes the targets that read it stale on the next run, and `--plan` lists every adopted file
 3. **Subagent skill smoke-test** — confirms `arckit:*` skills are reachable from `general-purpose` subagents in this session (~5 sec halt-or-go check)
 4. **Topological wave computation** — targets group into waves where every dep is complete; wave 0 is no-deps targets, wave 1 depends only on wave 0, etc.
-5. **Per-wave dispatch** — single assistant message containing N `Agent` tool calls runs in parallel; each subagent invokes its assigned `arckit:*` skill, validates the output, returns a ≤200-word summary
+5. **Per-wave dispatch** — single assistant message containing N `Agent` tool calls runs in parallel; each subagent invokes its assigned `arckit:*` skill, validates the output, returns a ≤200-word summary. A subagent reads only its dependencies' outputs, plus its own target's previous version when it is rebuilding one, so a regenerated artefact keeps its IDs and Revision History
 6. **Per-wave commit** — atomic git commit covering all artefacts in the wave plus the updated `state.json`
 7. **Halt-on-fail** — if any subagent fails or validation fails, write state, do *not* commit, surface a per-target error report. Resume with `--resume`
 8. **Post-build hooks** — `arckit:health` and `arckit:pages` run in parallel after the final target wave
 
 ## Session limits (subagents and searches)
 
-Claude Code caps subagent activity per session. Every cap **denies** — none of them queues. Verified against the Claude Code v2.1.220 binary: an over-cap spawn throws a tool error rather than waiting for a slot.
+Claude Code limits subagent activity per session. These limits do **not** behave alike, and the difference decides whether an over-budget build fails loudly or quietly degrades. Verified against the Claude Code v2.1.235 binary.
 
-| Limit | Default | Override |
-|---|---|---|
-| Concurrently-running subagents | 20 | `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` |
-| Subagent spawns per session | 200 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` |
-| WebSearch calls per session | 200 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` |
+| Limit | Default | Override | Behaviour at the limit |
+|---|---|---|---|
+| Concurrently-running subagents | 20 | `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` | **Denies.** Throws a tool error; nothing waits for a slot |
+| Subagent nesting depth | 3 | `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | **Denies.** *"Subagent nesting limit reached"* |
+| WebSearch calls per session | 200 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` | **Soft-degrades.** Returns a normal result telling the model to carry on |
 
-**Why this matters here specifically.** The harness dispatches one subagent per target per wave and is halt-on-fail. A wave wider than the concurrency cap therefore does not run slower — the 21st and later `Agent` calls fail immediately with *"Concurrent subagent limit reached … Do not retry"*, which the harness treats as wave failure and halts on. Hitting the per-session cap produces *"Subagent spawn limit reached"* and the same outcome.
+**Why this matters here specifically.** The harness dispatches one subagent per target per wave and is halt-on-fail. A wave wider than the concurrency cap therefore does not run slower — the 21st and later `Agent` calls fail immediately with *"Concurrent subagent limit reached … Do not retry"*, which the harness treats as wave failure and halts on.
 
-**No shipped recipe currently exceeds the concurrency cap.** The widest wave across all bundled recipes is **16 of 20**, in `uk-saas` and `uk-nhs-clinical-safety` with every optional target enabled. The largest total spawn count is 49, against a 200 per-session cap. `scripts/check_recipes.py` enforces this in CI: a recipe wave above 20 is an error, and above 16 warns, so the margin cannot quietly erode as recipes grow.
+**The WebSearch limit is the dangerous one, precisely because it does not fail.** Over budget, `WebSearch` returns a successful-looking result with `searchCount: 0` and the text *"Web search was not performed: this session has used its web search budget … Continue with the information already gathered instead of issuing more searches."* Nothing halts. A research-heavy build that crosses 200 searches keeps producing artefacts, just on thinner evidence — which for a governance document is a worse failure than stopping. If you are building a large recipe with several research targets in one session, either `/clear` between builds or raise `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` up front.
+
+**There is no per-session spawn cap.** Claude Code v2.1.224 removed the 200-subagent-per-session ceiling. `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` is still accepted as a setting but is never read — setting it produces no error and no effect, so do not rely on it to bound a build.
+
+**No shipped recipe currently exceeds the concurrency cap.** The widest wave across all bundled recipes is **16 of 20**, in `uk-saas` and `uk-nhs-clinical-safety` with every optional target enabled. `scripts/check_recipes.py` enforces this in CI: a recipe wave above 20 is an error, and above 16 warns, so the margin cannot quietly erode as recipes grow.
 
 That margin is only four agents, so it matters when you **write your own recipe**. If you add parallel targets to an existing wave, either keep the wave at 20 or fewer, or add a `deps:` edge to split it. Run `python3 scripts/check_recipes.py` to see the widest wave in your recipe.
 
-**Budgets are per session, not per build.** A build uses one spawn per target, so back-to-back builds, a `--refresh` pass, or research commands in the same session accumulate against the 200 ceiling. `/clear` resets the subagent budget. `--max-budget-usd`, if set, also halts running background subagents once reached.
+**The search budget is per session, not per build.** Back-to-back builds, a `--refresh` pass, or research commands run in the same session all draw on the same 200-search allowance; `/clear` starts a fresh one. `--max-budget-usd`, if set, halts running background subagents once reached — that limit *does* deny, with *"Budget limit reached"*.
 
 The concurrency cap is lifted in ultracode mode (which runs at `xhigh` effort and orchestrates dynamic workflows). Don't rely on that to make an over-wide wave work — the default path is what has to hold.
 
+**Subagents run in the background by default** as of Claude Code v2.1.232, which means an `Agent` call can return a launch acknowledgement rather than the worker's report. The harness dispatches with `run_in_background: false` so each wave still forms a barrier before validation and commit. You may see the workers appear in `/tasks` regardless; what matters is that the build does not advance to the next wave until every worker in the current one has reported.
+
+**Progress summaries cost requests.** While a subagent runs, Claude Code makes extra model requests to write a short progress summary of it, and a 16-wide wave has 16 workers running at once. To turn the summaries and their requests off, set `CLAUDE_CODE_DISABLE_AGENT_PROGRESS_SUMMARIES=1` before you start Claude Code. The variable works from Claude Code v2.1.318 and is described in the v2.1.323 changelog; the environment variables reference doesn't list it yet. The build doesn't read the summaries: each wave waits for the workers' final reports. What you lose is the running one-line summary of each worker.
+
 ## Path allocation — trust the hook
 
-Workers don't construct filenames or call `generate-document-id.mjs` themselves. The plugin's `validate-arc-filename.mjs` PreToolUse hook normalizes paths at write time: allocates the next sequence number for ADR/DIAG, applies `decisions/` and `diagrams/` subfolders, pads project IDs. Workers read the corrected `ACTUAL_PATH` from the Skill tool result and report it back.
+Workers don't construct filenames or call `generate-document-id.mjs` themselves. The plugin's `validate-arc-filename.mjs` PreToolUse hook checks paths at write time. If a path is wrong, it blocks the write and names the corrected one: the next sequence number for ADR/DIAG, the `decisions/` or `diagrams/` subfolder, a padded project ID. The worker writes there instead, then reports the path it actually wrote as `ACTUAL_PATH`.
 
 ## Customizing recipes
 
@@ -141,9 +149,9 @@ Every artefact written by the build harness gets a `## Build Provenance` block i
 
 ## See also
 
-- [`SKILL.md`](../../arckit-claude/skills/arckit-build/SKILL.md) — full orchestration spec
-- [`recipes/uk-saas.yaml`](../../arckit-claude/skills/arckit-build/recipes/uk-saas.yaml) — annotated reference recipe
-- [`recipes/uk-mod-sovereign.yaml`](../../arckit-claude/skills/arckit-build/recipes/uk-mod-sovereign.yaml) — sovereign-deployment variant
+- [`SKILL.md`](../../plugins/arckit-claude/skills/arckit-build/SKILL.md) — full orchestration spec
+- [`recipes/uk-saas.yaml`](../../plugins/arckit-claude/skills/arckit-build/recipes/uk-saas.yaml) — annotated reference recipe
+- [`recipes/uk-mod-sovereign.yaml`](../../plugins/arckit-claude/skills/arckit-build/recipes/uk-mod-sovereign.yaml) — sovereign-deployment variant
 - [Plugin Hooks → Provenance stamping](../../CLAUDE.md#provenance-stamping-provenance-stampmjs) — how build provenance is captured
 
 ---

@@ -4,7 +4,7 @@
 
 `/arckit:competitors` discovers competitor landscape intelligence — rival suppliers, awarded-value market share, head-to-head comparison, and concentration — from live UK procurement notices via the UK Tenders MCP.
 
-> **Agent Architecture**: This command uses a three-tier reader/writer subagent split. The **`arckit-tenders-reader`** subagent fetches evidence from the UK Tenders MCP (shared with `/arckit:tenders`, keeping that I/O isolated from your main context window). The orchestrator tier (the slash command) validates the reader's JSON payload against the `tenders-handoff.schema.json` schema and computes deterministic derived fields, including the supplier-rivalry head-to-head. The **`arckit-competitors-writer`** subagent then renders the final artefact. The slash command launches and coordinates both agents.
+> **Agent Architecture**: This command uses a three-tier reader/writer subagent split. The **`arckit-tenders-reader`** subagent fetches evidence from the UK Tenders MCP (shared with `/arckit:tenders`, keeping that I/O isolated from your main context window). The orchestrator tier (the slash command) validates the reader's JSON payload against the `tenders-handoff.schema.json` schema and computes deterministic derived fields, including the supplier-rivalry head-to-head. The **`arckit-competitors-writer`** subagent then renders the final artefact. The slash command launches and coordinates both agents. On runtimes without subagent dispatch (Codex, Gemini, OpenCode, Copilot, Paperclip, Vibe, Kimi), the command ships as the equivalent single-agent `arckit-competitors` prompt instead, which does the same discovery, derivation and rendering in one role.
 
 ---
 
@@ -58,11 +58,11 @@ Use `--supplier 'Name'` to run a **supplier-focus** query: the named supplier be
 
 You can combine flags: `/arckit:competitors cloud hosting --cpv 72200000 --supplier 'Acme Cloud Ltd'`.
 
-**CPV code format:** eight digits, optionally followed by a division suffix (`NNNNNNNN-N`). Common codes:
+**CPV code format:** eight digits, optionally followed by a hyphen and the check digit (`NNNNNNNN-N`). Common codes:
 
 | Code | Category |
 |------|----------|
-| 72200000 | Software-related services |
+| 72200000 | Software programming and consultancy services |
 | 72300000 | Data services |
 | 72600000 | IT support and consultancy |
 | 48000000 | Software packages and systems |
@@ -103,7 +103,7 @@ Outputs: `projects/<id>/research/ARC-<id>-CMPT-<NNN>-v1.0.md`
 claude remote-control
 ```
 
-Drive the session from claude.ai/code or the mobile app, then enable `/config → Push when Claude decides` so your phone gets a notification on completion. ArcKit's minimum Claude Code floor (v2.1.219) already covers the v2.1.110 RC requirement.
+Drive the session from claude.ai/code or the mobile app, then enable `/config → Push when Claude decides` so your phone gets a notification on completion. ArcKit's minimum Claude Code floor (v2.1.319) already covers the v2.1.110 RC requirement.
 
 Caveats: Pro/Max plans only (no API keys, no Bedrock/Vertex/Foundry), push is a single on/off so chatty agents can over-notify, and the local `claude` process must keep running.
 
@@ -148,8 +148,8 @@ The writer performs a bounded section-merge — it updates only the `## Governme
 
 | Property | Detail |
 |----------|--------|
-| **MCP server** | `uk-tenders` (keyless, deferred load, shared with `/arckit:tenders`) |
-| **Coverage** | ~677,000 UK contracting processes across five national portals |
+| **MCP server** | `uk-tenders` (keyless, always loaded, shared with `/arckit:tenders`) |
+| **Coverage** | About 726,000 UK contracting processes across five national portals (25 October 2026) |
 | **Portals covered** | Find a Tender Service (FTS), Contracts Finder, Public Contracts Scotland, Sell2Wales, eTendersNI |
 | **Refresh cadence** | Nightly |
 | **Availability** | Best-effort single Cloud Run instance — no formal SLA. A dead endpoint degrades gracefully (the reader returns partial data and the artefact renders with degraded-source notes). |
@@ -186,7 +186,7 @@ The reader returns evidence across five procurement portals, ranked internally b
 |-----------|---------|-------------|
 | **Input** | `/arckit:requirements` | CPV codes and capability keywords derived from DR/FR/INT |
 | **Input** | `/arckit:tenders` | TNDR artefact narrows the capability scope and provides market benchmarks |
-| **Output** | `/arckit:research` | Feed the competitive set into build-vs-buy analysis and TCO comparison |
+| **Output** | `/arckit:research` | Feed the competitive set into the market research and its cost evidence |
 | **Output** | `/arckit:score` | Rival award history used as comparative Company Experience evidence |
 | **Output** | `/arckit:risk` | Concentration / single-supplier-dependency risk |
 | **Output** | `/arckit:adr` | Competitive landscape and route-to-market decisions recorded as ADRs |
@@ -195,7 +195,7 @@ The reader returns evidence across five procurement portals, ranked internally b
 
 ## Follow-on Actions
 
-- Feed the competitive set into build-vs-buy analysis (`/arckit:research`)
+- Feed the competitive set into market research (`/arckit:research`)
 - Use rival award history as Company Experience evidence in a vendor scorecard (`/arckit:score`)
 - Register supplier-concentration or single-supplier-dependency risks (`/arckit:risk`)
 - Record route-to-market decisions as ADRs (`/arckit:adr`)

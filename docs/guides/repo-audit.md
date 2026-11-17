@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Official | **ArcKit Version**: [VERSION]
 
-`/arckit-repo:repo-audit` reads a real codebase and produces a governance-shaped audit: the as-built architecture, scored against your architecture principles and requirements where they exist, with every gap expressed as a proposed ADR.
+`/arckit:repo-audit` reads a real codebase and produces a governance-shaped audit: the as-built architecture, scored against your architecture principles and requirements where they exist, with every gap expressed as a proposed ADR.
 
 It is the inverse of the usual ArcKit flow. Most commands generate artefacts that a build will later satisfy. This one reads a build that already exists and works backwards to the governance record it should have had.
 
@@ -21,25 +21,25 @@ claude plugin install arckit-repo
 Audit the repository you are working in:
 
 ```text
-/arckit-repo:repo-audit
+/arckit:repo-audit
 ```
 
 Audit a public repository elsewhere:
 
 ```text
-/arckit-repo:repo-audit https://github.com/org/service
+/arckit:repo-audit https://github.com/org/service
 ```
 
 Narrow the audit to what you care about:
 
 ```text
-/arckit-repo:repo-audit https://github.com/org/service security and resilience
+/arckit:repo-audit https://github.com/org/service security and resilience
 ```
 
 See what would happen without writing or cloning anything:
 
 ```text
-/arckit-repo:repo-audit https://gitlab.com/group/project --check
+/arckit:repo-audit https://gitlab.com/group/project --check
 ```
 
 ---
@@ -51,7 +51,7 @@ The audit includes a C4 container diagram of the as-built architecture. It is wr
 Pass `--diagram-format plantuml` when layout quality matters more than portability:
 
 ```text
-/arckit-repo:repo-audit https://github.com/org/service --diagram-format plantuml
+/arckit:repo-audit https://github.com/org/service --diagram-format plantuml
 ```
 
 C4-PlantUML lays out large container diagrams better and supports directional hints (`Lay_D`, `Lay_R`), which start to matter above roughly ten containers. The trade is that it needs a PlantUML server, the VS Code PlantUML extension, or ArcKit Pages to render, so it will not display inline on GitHub.
@@ -67,7 +67,7 @@ find ~/.claude/plugins/cache -path '*/templates/codebase-audit-template.md' \
   | xargs -I{} cp {} .arckit/templates-custom/codebase-audit-template.md
 ```
 
-Then edit the fenced diagram block in your copy. `/arckit-repo:repo-audit` reads `.arckit/templates-custom/` before `.arckit/templates/` and before the plugin default, so every audit in that project picks up your version, and it survives plugin upgrades. An explicit `--diagram-format` on the command line still wins over whatever the template says.
+Then edit the fenced diagram block in your copy. `/arckit:repo-audit` reads `.arckit/templates-custom/` before `.arckit/templates/` and before the plugin default, so every audit in that project picks up your version, and it survives plugin upgrades. An explicit `--diagram-format` on the command line still wins over whatever the template says.
 
 ---
 
@@ -130,12 +130,12 @@ The report has eleven sections. Three are worth calling out:
 
 | Command | What it does | How it differs |
 |---------|--------------|----------------|
-| `/arckit-repo:repo-docs` | Documents a repository | Describes. This command judges. |
+| `/arckit:repo-docs` | Documents a repository | Describes. This command judges. |
 | `/arckit:conformance` | Decided-vs-designed conformance | Reads ArcKit artefacts only, never source code. |
 | `/arckit:analyze` | Governance quality across artefacts | Artefact-only. No codebase involved. |
 | `/arckit:gov-reuse` | Finds reusable UK government code | Scores external repos for reuse candidacy, not architecture conformance. |
 
-A natural sequence for an inherited codebase: `/arckit-repo:repo-audit` to find out what you have, `/arckit:adr` to record the decisions it surfaced, `/arckit:risk` to promote the CRITICAL and HIGH findings, then `/arckit:conformance` once there are ADRs to conform to.
+A natural sequence for an inherited codebase: `/arckit:repo-audit` to find out what you have, `/arckit:adr` to record the decisions it surfaced, `/arckit:risk` to promote the CRITICAL and HIGH findings, then `/arckit:conformance` once there are ADRs to conform to.
 
 ---
 

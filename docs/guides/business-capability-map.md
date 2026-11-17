@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-togaf-adm:business-capability-map` creates the business architecture baseline for TOGAF ADM Phase A. It maps capability hierarchy, value streams, capability maturity, heatmaps, and requirement or principle traceability.
+`/arckit:business-capability-map` creates the business architecture baseline for TOGAF ADM Phase B (Business Architecture), detailing the capabilities and value streams the Phase A Architecture Vision sketches at a high level. It maps capability hierarchy, value streams, capability maturity, heatmaps, and requirement or principle traceability.
 
 ---
 
@@ -21,7 +21,7 @@
 ## Command
 
 ```bash
-/arckit-togaf-adm:business-capability-map <project ID or capability scope>
+/arckit:business-capability-map <project ID or capability scope>
 ```
 
 Output: `projects/<id>/ARC-<id>-BPCM-v1.0.md`
@@ -44,10 +44,10 @@ Output: `projects/<id>/ARC-<id>-BPCM-v1.0.md`
 
 ## Workflow
 
-1. Run `/arckit-togaf-adm:adm-preliminary` to define the scope and vision.
-2. Run `/arckit-togaf-adm:business-capability-map` to build the business capability baseline.
-3. Use `/arckit-togaf-adm:application-inventory` to map applications to capabilities.
-4. Use `/arckit-togaf-adm:gap-analysis` to identify weak or missing capability support.
+1. Run `/arckit:adm-preliminary` to define the scope and vision.
+2. Run `/arckit:business-capability-map` to build the business capability baseline.
+3. Use `/arckit:application-inventory` to map applications to capabilities.
+4. Use `/arckit:gap-analysis` to identify weak or missing capability support.
 
 ---
 
@@ -63,6 +63,6 @@ Output: `projects/<id>/ARC-<id>-BPCM-v1.0.md`
 
 ## Related Commands
 
-- `/arckit-togaf-adm:application-inventory` - Attach applications to capabilities.
-- `/arckit-togaf-adm:gap-analysis` - Prioritise capability gaps.
-- `/arckit-togaf-adm:transition-architecture` - Turn capability gaps into work packages.
+- `/arckit:application-inventory` - Attach applications to capabilities.
+- `/arckit:gap-analysis` - Prioritise capability gaps.
+- `/arckit:transition-architecture` - Turn capability gaps into work packages.

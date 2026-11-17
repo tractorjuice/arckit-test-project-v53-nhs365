@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-eu:eu-cloud-sovereignty` assesses a cloud service against the European Commission's Cloud Sovereignty Framework (v1.2.1, October 2025). The framework supplements security assurance schemes — SecNumCloud, EUCS, ISO 27001 — with sovereignty-specific safeguards for cloud procurement. It scores eight weighted objectives and expresses the result on a five-level Sovereignty Effectiveness Assurance Level (SEAL) scale.
+`/arckit:eu-cloud-sovereignty` assesses a cloud service against the European Commission's Cloud Sovereignty Framework (v1.2.1, October 2025), weighted and scored per the Commission's Implementation guidance and Annex calculator (1 June 2026). The framework supplements security assurance schemes — SecNumCloud, EUCS, ISO 27001 — with sovereignty-specific safeguards for cloud procurement. It scores eight weighted objectives and expresses the result on a five-level Sovereignty Effectiveness Assurance Level (SEAL) scale.
 
 Use it when specifying a tender, when evaluating a candidate service against one, or both.
 
@@ -22,8 +22,10 @@ Use it when specifying a tender, when evaluating a candidate service against one
 ## Command
 
 ```bash
-/arckit-eu:eu-cloud-sovereignty Assess sovereignty posture for <cloud service or tender>
+/arckit:eu-cloud-sovereignty Assess sovereignty posture for <cloud service or tender>
 ```
+
+In Claude Code the overlay installs as its own plugin, `arckit-eu`, so the command is `/arckit-eu:eu-cloud-sovereignty`.
 
 Output: `projects/<id>/ARC-<id>-EUCSF-v1.0.md`
 
@@ -31,7 +33,7 @@ Output: `projects/<id>/ARC-<id>-EUCSF-v1.0.md`
 
 ## The Eight Sovereignty Objectives
 
-Weights are set by the framework and sum to 100%. Treat them as the framework's defaults: ArcKit applies them as published, and the command does not offer a way to re-weight them. If a tender specification states its own weighting, follow the tender and record the deviation.
+ArcKit uses the weights in the Commission's Annex calculator, published with the Implementation guidance on 1 June 2026 (the guidance shows them on p.7 under "Score (examples)"). They sum to 100%. Framework v1.2.1 (October 2025, p.6) weighted three objectives differently: SOV-1 at 15%, SOV-5 at 20% and SOV-7 at 10%. The Commission calls the June 2026 material "an additional clarification" of the framework and has not withdrawn v1.2.1, so the assessment states which weighting it uses. The command does not offer a way to re-weight. If a tender specification states its own weighting, including v1.2.1's, follow the tender and record the deviation.
 
 | Objective | Weight |
 |-----------|--------|
@@ -44,7 +46,7 @@ Weights are set by the framework and sum to 100%. Treat them as the framework's 
 | SOV-7 Security & Compliance Sovereignty | 15% |
 | SOV-8 Environmental Sustainability | 5% |
 
-Strategic sovereignty carries the heaviest weight, and together with technology and operational sovereignty accounts for 50% — the framework treats dependency as the core sovereignty question, not data location alone.
+In the calculator weighting, strategic sovereignty carries the heaviest weight, and together with technology and operational sovereignty accounts for 50% — dependency, not data location alone, is the core sovereignty question. (In v1.2.1, supply chain sovereignty carried the heaviest weight.)
 
 ---
 
@@ -52,11 +54,13 @@ Strategic sovereignty carries the heaviest weight, and together with technology 
 
 | Level | Meaning |
 |-------|---------|
-| SEAL-0 | No sovereignty — exclusive non-EU control, governed entirely outside the EU |
+| SEAL-0 | No sovereignty — exclusive non-EU control, governed entirely by non-EU jurisdictions |
 | SEAL-1 | Jurisdictional sovereignty — EU law formally applies, limited practical enforceability |
-| SEAL-2 | Data sovereignty — EU law applicable and enforceable, material non-EU dependencies remain |
-| SEAL-3 | Digital resilience — EU actors exercise meaningful but not full influence |
+| SEAL-2 | Data sovereignty — EU jurisdictions apply, material dependencies remain |
+| SEAL-3 | Technological sovereignty — EU jurisdictions apply, EU actors exercise meaningful but not full influence |
 | SEAL-4 | Full digital sovereignty — technology and operations under complete EU control |
+
+The names and wording follow the Implementation guidance (pp.2–3), which the command reproduces verbatim. Framework v1.2.1 (October 2025, p.3) names SEAL-3 *Digital Resilience* and words SEAL-2 as "EU law applicable and enforceable, with material non-EU dependencies remaining"; a tender written against v1.2.1 may use those terms.
 
 ---
 
@@ -104,8 +108,8 @@ A service can score well overall and still be rejected for missing one objective
 
 The eight objectives each carry their own SEAL, but the framework also defines an aggregate across all of them — and it is deliberately a **minimum**, never an average and never a mode. Two levels of the same rule apply, and the command cites them separately:
 
-- **Per-objective SEAL** = the minimum SEAL across every criterion answered within that objective. The Commission's own Annex calculator implements exactly this at cell F2 — `="SEAL-"&MIN(H5:H251)` — the minimum over every answered row.
-- **Overall SEAL** = the minimum SEAL evidenced across all eight objectives. The Implementation guidance states this plainly (p.9): *"The overall SEAL level is the lowest SEAL level achieved in any of the objectives."*
+- **Per-objective SEAL** = the minimum SEAL across every criterion answered within that objective. This is a property of the framework: the Annex calculator has no per-objective SEAL cell.
+- **Overall SEAL** = the minimum SEAL evidenced across all eight objectives. The Implementation guidance states this plainly (p.9): *"The overall SEAL level is the lowest SEAL level achieved in any of the objectives."* The Commission's Annex calculator implements it at cell F2 — `="SEAL-"&MIN(H5:H251)` — the minimum over every answered row across all eight objectives.
 
 Those two levels agree because an objective's own SEAL is already a minimum — the Overall SEAL is a minimum-of-minimums, not a second independent calculation.
 
@@ -134,7 +138,7 @@ One caveat on SEAL-4 itself, from the Commission's own "Lessons learnt" (p.13, p
 ## Review Checklist
 
 - [ ] All eight objectives assessed, none skipped
-- [ ] Weights sum to 100% and match the framework's values
+- [ ] Weights sum to 100%, match the 1 June 2026 calculator's values, and the document says which weighting it uses
 - [ ] SEAL claimed and SEAL evidenced recorded separately per objective
 - [ ] Overall SEAL present and computed as a minimum (never an average or mode), with its governing objective/criterion named
 - [ ] Minimum SEAL levels attributed to the tender specification, never to the framework
@@ -147,7 +151,7 @@ One caveat on SEAL-4 itself, from the Commission's own "Lessons learnt" (p.13, p
 
 ## Key Notes
 
-**There is no published EU list of assessed providers.** Anyone arriving from `/arckit-fr:fr-secnumcloud`, which does have a qualification scheme, will expect one. The command says so explicitly for that reason.
+**There is no published EU list of assessed providers.** Anyone arriving from `/arckit:fr-secnumcloud`, which does have a qualification scheme, will expect one. The command says so explicitly for that reason.
 
 **SecNumCloud and EUCS are complementary, not substitutes.** They address security assurance; this framework addresses sovereignty — jurisdictional, supply chain, operational and technology independence. A SecNumCloud qualification does not by itself establish a SEAL level.
 
@@ -159,6 +163,6 @@ One caveat on SEAL-4 itself, from the Commission's own "Lessons learnt" (p.13, p
 
 | Command | Relationship |
 |---------|--------------|
-| `/arckit-eu:eu-nis2` | Security baseline that SOV-7 intersects with |
-| `/arckit-fr:fr-secnumcloud` | French security qualification, complementary where a French dimension applies |
+| `/arckit:eu-nis2` | Security baseline that SOV-7 intersects with |
+| `/arckit:fr-secnumcloud` | French security qualification, complementary where a French dimension applies |
 | `/arckit:risk` | Sovereignty and supply chain risks belong in the register |

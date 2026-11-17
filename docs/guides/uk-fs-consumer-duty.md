@@ -1,26 +1,28 @@
-# Consumer Duty Annual Board Report (`/arckit-uk-finance:uk-fs-consumer-duty`)
+# Consumer Duty Annual Board Report (`/arckit:uk-fs-consumer-duty`)
 
 > **Status**: EXPERIMENTAL · Community-contributed · **Output is not regulatory advice.**
 > The Consumer Duty Board Report MUST be reviewed, materially supplemented, and signed off by
 > qualified UK FS regulatory counsel, the firm's Compliance Officer, the firm's MLRO (where the
 > vulnerable-customer identification methodology or price-personalisation logic intersects with AML
-> risk profiling), and the SMF holders who will attest the report before it is presented to the
-> Board. FCA Consumer Duty publications (PS22/9, FG22/5, board-report observations) may have been
-> updated since this command was authored — verify against the current FCA website before reliance.
+> risk profiling), and the individuals who will sign the attestation for the governing body (SMF
+> holders only if the firm is within SM&CR) before it is presented to the Board. FCA Consumer Duty
+> publications (PS22/9, FG22/5, board-report observations) may have been updated since this command
+> was authored — verify against the current FCA website before reliance.
 
 ## Purpose
 
-The `/arckit-uk-finance:uk-fs-consumer-duty` command generates an FCA Consumer Duty Annual Board Report for
+The `/arckit:uk-fs-consumer-duty` command generates an FCA Consumer Duty Annual Board Report for
 an authorised UK Payment Service Provider (PSP), Electronic Money Institution (EMI), or Payment
 Institution (PI) with retail customers. The report covers the four Consumer Duty outcomes introduced
 by FCA PS22/9 (in force 31 July 2023 for open products / 31 July 2024 for closed products) and
 anchored in FCA Principle 12 and PRIN 2A (introduced by FCA 2022/31).
 
-The artefact is structured to support the Board attestation requirement — named SMF holders must
-attest to each outcome section before the report is presented to the Board. It is not a template
-for copying: fair-value assessments, vulnerable customer identification, and foreseeable harm
-registers must be grounded in the firm's own evidence, not assumed demographics or generic
-statements.
+The artefact is structured to support the governing body's review: at least annually it must
+review and approve the report, confirm whether it is satisfied the firm is complying with the
+Consumer Duty, and assess whether its future business strategy is consistent with it (PRIN
+2A.8.4R). It is not a template for copying: fair-value assessments, vulnerable customer
+identification, and foreseeable harm registers must be grounded in the firm's own evidence, not
+assumed demographics or generic statements.
 
 ---
 
@@ -32,10 +34,14 @@ statements.
 - **Product launch or material change** — a new product, a fee change, a change to the distribution
   strategy, or a change to the target market definition requires an updated target market assessment
   and, where the change affects Price and Value, a refreshed fair-value statement.
-- **Post-FCA observation cycle** — the FCA's December 2024 good-and-poor-practice observations
-  identified common weaknesses (backward-looking harm assessments, under-evidenced vulnerable
-  customer sections, generic forward plans). If the firm's existing Board Report exhibits these
-  weaknesses, this command provides a structured re-draft.
+- **Post-FCA observation cycle** — the FCA's "Consumer Duty board reports: good practice and areas
+  for improvement" (11 December 2024, last updated 9 March 2026) reviewed first-year reports from
+  180 firms and named five areas for improvement: data quality, a view across distribution chains,
+  analysis of different customer types including vulnerability, challenge from the board, and
+  taking effective action. Its blog "Year 2 Consumer Duty Board Reports: progress and what comes
+  next" (16 April 2026) found improvement but continuing gaps, including data presented without
+  saying what it shows about outcomes and board challenge that is not documented. If the firm's
+  existing Board Report shows these weaknesses, this command provides a structured re-draft.
 - **Vulnerable customer cohort refresh** — if the firm's identification methodology has changed
   (new proxy indicators, updated MI, changes to the customer support journey), the cohort summary
   needs updating independently of the annual cycle.
@@ -50,7 +56,7 @@ statements.
 Pass the project ID and product context as `$ARGUMENTS`:
 
 ```text
-/arckit-uk-finance:uk-fs-consumer-duty 003 retail FX cross-border payments
+/arckit:uk-fs-consumer-duty 003 retail FX cross-border payments
 ```
 
 The argument should include:
@@ -75,7 +81,8 @@ Foreseeable Harms register.
 
 The generated artefact contains the following sections:
 
-1. Document Control (classification, owner, SMF holders, review cycle)
+1. Document Control (classification, owner, review cycle; the firm context records the chief
+   executive, compliance oversight and whether the firm is within SM&CR)
 2. Scope and Reporting Period (products in scope, open vs closed product classification)
 3. Products and Services Outcome (target market assessment, distribution strategy, foreseeable
    harms identified at product design level)
@@ -88,8 +95,8 @@ The generated artefact contains the following sections:
 7. Vulnerable Customer Cohort Summary (per the FG22/5 four vulnerability drivers; evidence-based,
    not assumed)
 8. Foreseeable Harms Register (HARM-NNN entries with severity, mitigations, residual risk, owner)
-9. Board Attestation Block (SMF holder names, roles, attestation statements — inlined from
-   the board-report template)
+9. Board Attestation Block (names and roles of the individuals signing for the governing body,
+   attestation statements — inlined from the board-report template)
 10. References (all required citations)
 
 ---
@@ -121,10 +128,11 @@ in the attestation block; firms that do not retain the role need not include it.
 implements this update — do not carry over Board Champion language from templates drafted before
 February 2025 without verifying the firm's current governance model.
 
-**PRIN 2A** (the Consumer Duty sourcebook rules) is accessed via the FCA Handbook at
-`https://www.handbook.fca.org.uk`. The Handbook does not support stable deep links to individual
-chapters; navigate via the Handbook homepage or cite FCA 2022/31 (the instrument that introduced
-PRIN 2A) for a stable legislative anchor.
+**PRIN 2A** (the Consumer Duty rules) is in the FCA Handbook, which has stable links to each
+chapter and section: PRIN 2A at <https://handbook.fca.org.uk/handbook/prin2a> and the governing
+body report rules at <https://handbook.fca.org.uk/handbook/prin2a/prin2as8> (PRIN 2A.8). FCA
+2022/31 is the instrument that introduced Principle 12 and PRIN 2A; the Handbook shows the rules
+as amended since.
 
 ---
 
@@ -136,8 +144,8 @@ PRIN 2A) for a stable legislative anchor.
 | `/arckit:stakeholders` | Target market assessment (Outcome 1) maps directly to the stakeholder Goals section — use the STKE artefact as the primary input. |
 | `/arckit:dpia` | Price-personalisation (dynamic FX rates, tiered fees) or vulnerable-customer scoring using proxy indicators involves profiling under UK GDPR — a DPIA is required. |
 | `/arckit:risk` | Foreseeable harms in the Consumer Duty report map to Orange Book risk entries. Cross-reference HARM-NNN identifiers to RISK artefact entries for traceability. |
-| `/arckit-uk-finance:uk-fs-sca-rts` | SCA biometric and device-fingerprinting design intersects with the Consumer Understanding outcome for customers with accessibility needs or characteristics of vulnerability. |
-| `/arckit-uk-finance:uk-fs-safeguarding` | EMI and PI redemption accessibility under the Consumer Support outcome intersects with safeguarding obligations — customers must be able to redeem funds promptly. |
+| `/arckit:uk-fs-sca-rts` | SCA biometric and device-fingerprinting design intersects with the Consumer Understanding outcome for customers with accessibility needs or characteristics of vulnerability. |
+| `/arckit:uk-fs-safeguarding` | EMI and PI redemption accessibility under the Consumer Support outcome intersects with safeguarding obligations — customers must be able to redeem funds promptly. |
 
 ---
 
@@ -146,15 +154,20 @@ PRIN 2A) for a stable legislative anchor.
 - **Consumer Duty applies to firms with retail customers only.** Wholesale-only firms are out of
   scope. Firms with a mixed book must document which products and channels are in scope and mark
   wholesale-only sections explicitly as N/A with a rationale.
-- **"Foreseeable harm" is a forward-looking standard.** The FCA's December 2024 board-report
-  observations found many firms were backward-looking — using past complaints data as the primary
-  harm evidence. Past data is necessary but not sufficient. The harm assessment must consider
-  product-design risks, distribution risks, and operational capability risks that could arise even
-  where they have not yet materialised.
-- **Board attestation requires named SMF holders, not teams.** The FCA's December 2024 observations
-  noted a pattern of attestation blocks listing teams rather than named individuals. The attestation
-  must be signed by the named SMFs — typically SMF3 (CEO), SMF7 (Group Entity Senior Manager or
-  equivalent), and the SMF for Compliance Oversight — not by "the Compliance Team".
+- **"Foreseeable harm" is a forward-looking standard.** Past complaints data is necessary but not
+  sufficient as harm evidence. The harm assessment must consider product-design risks,
+  distribution risks, and operational capability risks that could arise even where they have not
+  yet materialised.
+- **The attestation names individuals, not teams, and uses SMF titles only under SM&CR.** PRIN
+  2A.8.4R makes the governing body review and approve the report but names no signatories; PRIN
+  applies to EMIs and payment institutions (PRIN 3.1.1AR). If the firm is within SM&CR
+  (FSMA-authorised, e.g. a bank or a firm with a Part 4A permission), the signatories are
+  typically SMF1 (Chief executive), SMF9 (Chair of the governing body) and SMF16 (Compliance
+  oversight). A PI or EMI authorised only under the PSRs 2017 or EMRs 2011 is outside SM&CR: its
+  directors and the persons responsible for management notified to the FCA sign (PSRs 2017
+  regulation 6(7)(b); EMRs 2011 regulation 6(6)(b)). Either way, not "the Compliance Team". The
+  FCA's board-report publications both ask for evidence that the governing body challenged the
+  report, so record that challenge.
 - **Price-personalisation is a high-scrutiny area.** Where the firm's pricing algorithm produces
   different prices for different consumers, it must demonstrate that variation reflects genuine cost
   or risk differentials, not discriminatory profiling. DPIA and Article 22 UK GDPR alignment is
@@ -172,7 +185,11 @@ PRIN 2A) for a stable legislative anchor.
 | FCA PS22/9 — A new Consumer Duty (policy statement, July 2022) | <https://www.fca.org.uk/publications/policy-statements/ps22-9-new-consumer-duty> |
 | FCA FG22/5 — Guidance for firms on the Consumer Duty (PDF, August 2022) | <https://www.fca.org.uk/publication/finalised-guidance/fg22-5.pdf> |
 | FCA PS22/9 — Policy Statement PDF | <https://www.fca.org.uk/publication/policy/ps22-9.pdf> |
-| FCA Consumer Duty board reports: good practice and areas for improvement (December 2024, updated March 2026) | <https://www.fca.org.uk/publications/good-and-poor-practice/consumer-duty-board-reports-good-practice-areas-improvement> |
+| FCA Consumer Duty board reports: good practice and areas for improvement (11 December 2024, last updated 9 March 2026) | <https://www.fca.org.uk/publications/good-and-poor-practice/consumer-duty-board-reports-good-practice-areas-improvement> |
+| FCA blog — Year 2 Consumer Duty Board Reports: progress and what comes next (16 April 2026) | <https://www.fca.org.uk/news/blogs/year-2-consumer-duty-board-reports-progress-and-what-comes-next> |
 | FCA Consumer Duty — information for firms | <https://www.fca.org.uk/firms/consumer-duty/information-firms> |
-| FCA Handbook (entry point — navigate to PRIN 2A for Consumer Duty rules) | <https://www.handbook.fca.org.uk> |
-| FCA 2022/31 — Consumer Duty instrument (introduces Principle 12 and PRIN 2A) | <https://www.fca.org.uk/publication/policy/fca-2022-31.pdf> |
+| FCA Handbook PRIN 2A — The Consumer Duty | <https://handbook.fca.org.uk/handbook/prin2a> |
+| FCA Handbook PRIN 2A.8 — Governance and culture (governing body report, PRIN 2A.8.3R to 2A.8.5R) | <https://handbook.fca.org.uk/handbook/prin2a/prin2as8> |
+| FCA Handbook PRIN 2.1 — The Principles (Principle 12) | <https://handbook.fca.org.uk/handbook/prin2/prin2s1> |
+| FCA Handbook PRIN 3.1 — Who? (PRIN 3.1.1AR applies PRIN to EMIs and payment institutions) | <https://handbook.fca.org.uk/handbook/prin3/prin3s1> |
+| FCA 2022/31 — Consumer Duty Instrument 2022 (introduces Principle 12 and PRIN 2A) | <https://api-handbook.fca.org.uk/files/instrument/2022/FCA_2022_31.pdf> |

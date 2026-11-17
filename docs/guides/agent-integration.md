@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-agent-architecture:agent-integration` creates an Agent Integration Architecture for multi-agent systems. It defines integration scope, inter-agent contracts, message protocol, shared state, failure isolation, observability, and traceability.
+`/arckit:agent-integration` creates an Agent Integration Architecture for multi-agent systems. It defines integration scope, inter-agent contracts, message protocol, shared state, failure isolation, observability, and traceability.
 
 ---
 
@@ -14,14 +14,15 @@
 | Agent inventory (`ARC-<id>-AAGI-v1.0.md`) | Agent register, lifecycle, and deployment context |
 | Agent governance (`ARC-<id>-AAOV-v1.0.md`) | Oversight, approval, and audit requirements |
 | Agent security (`ARC-<id>-AASE-v1.0.md`) | Security controls and permitted communication patterns |
-| System diagrams or HLD reviews | Existing system integration and platform context |
+| Global principles (`ARC-000-PRIN-v1.0.md`) | Integration standards and interoperability requirements |
+| ADM preliminary (`ARC-<id>-ADMP-v1.0.md`) | Integration architecture references and migration phases |
 
 ---
 
 ## Command
 
 ```bash
-/arckit-agent-architecture:agent-integration <project ID or agent group>
+/arckit:agent-integration <project ID or agent group>
 ```
 
 Output: `projects/<id>/ARC-<id>-AAIN-v1.0.md`
@@ -54,6 +55,7 @@ Output: `projects/<id>/ARC-<id>-AAIN-v1.0.md`
 
 ## Related Commands
 
-- `/arckit-agent-architecture:agent-design` - Define individual agent architecture and interfaces.
-- `/arckit-agent-architecture:agent-governance` - Apply oversight to multi-agent orchestration.
-- `/arckit-agent-architecture:agent-security` - Secure inter-agent communication.
+- `/arckit:agent-design` - Define individual agent architecture and interfaces.
+- `/arckit:agent-governance` - Run before this command. It sets the oversight, approval and audit requirements the contracts must respect.
+- `/arckit:agent-security` - Run before this command. It sets the controls inter-agent communication must follow.
+- `/arckit:agent-maturity` - Run next. It assesses integration alongside the other four dimensions.

@@ -1,6 +1,6 @@
 # UK + EU MDR SaMD / AIaMD Classification Guide
 
-> **Command**: `/arckit-uk-nhs:uk-mdr-classification` | **Overlay**: [UK NHS Clinical Safety Overlay](uk-nhs-clinical-safety-overlay.md) | **Origin**: Community-contributed
+> **Command**: `/arckit:uk-mdr-classification` | **Overlay**: [UK NHS Clinical Safety Overlay](uk-nhs-clinical-safety-overlay.md) | **Origin**: Community-contributed
 
 ## Purpose
 
@@ -22,7 +22,7 @@ Single artefact `projects/{NNN}-<slug>/ARC-{NNN}-NHSMDR-v1.0.md` covering:
 - **EU MDR 2017/745 classification** — Rule 11 reasoning, divergence from UK classification (EU is typically more conservative; many products that were Class I under MDD moved to Class IIa under MDR)
 - **Marking pathway** — UKCA (GB), UKNI (NI under Windsor Framework), CE (EU market + NI), CE-in-GB transitional arrangements
 - **Conformity-assessment route** — self-declaration vs Approved Body vs Notified Body, with technical documentation and clinical evaluation expectations
-- **MHRA SaMD / AIaMD Programme** alignment — applicable Work Packages (WP1 Software, WP6 AIaMD, WP9 Cyber Security, WP11 Best Practice for Manufacturers)
+- **MHRA SaMD / AIaMD Programme** alignment — applicable work packages from the MHRA Software and AI as a Medical Device Change Programme roadmap (WP1 Qualification, WP2 Classification, WP3 Premarket requirements, WP4 Post Market, WP5 Cyber Secure Medical Devices; for AIaMD also WP9 AI Rigour, WP10 Project Glass Box, WP11 Project Ship of Theseus)
 - **Standards alignment** — ISO 14971 (risk management), IEC 62304 (software lifecycle), ISO 13485 (QMS, signposted), IEC 62366-1 (usability), ISO/IEC 27001 (information security), ISO/IEC TR 24028 (AI trustworthiness for AIaMD)
 - **Post-market obligations** — PMS plan, vigilance reporting timelines, PSUR cadence, FSCA, AIaMD substantial-change handling
 - **Substantial change triggers**, **open regulatory risks**
@@ -52,8 +52,8 @@ UK MDR is being substantially reformed by MHRA. CE-marking recognition in GB tra
 
 ## Related commands
 
-- `/arckit-uk-nhs:uk-nhs-dcb0129` — DCB0129 hazard log feeds the ISO 14971 risk file (complementary; ISO 14971 and DCB0129 are distinct but cross-referenced)
-- `/arckit-uk-nhs:uk-nhs-dtac` — DTAC consumes the classification statement to determine procurement assurance route
+- `/arckit:uk-nhs-dcb0129` — DCB0129 hazard log feeds the ISO 14971 risk file (complementary; ISO 14971 and DCB0129 are distinct but cross-referenced)
+- `/arckit:uk-nhs-dtac` — DTAC question C1.1.1 asks whether the product is Software or AI as a Medical Device under UK MDR 2002; a Yes needs a completed Pre-Acquisition Questionnaire
 - `/arckit:risk` — project risk register cross-references regulatory-classification risks (misclassification, market-access risk, post-market surveillance failure)
 - `/arckit:adr` — major regulatory routing decisions (UKCA self-declare vs Approved Body, EU MDR via Notified Body vs not, NI placement strategy) belong in an ADR
 - `/arckit:atrs` — if AIaMD, ATRS publication is expected alongside model card

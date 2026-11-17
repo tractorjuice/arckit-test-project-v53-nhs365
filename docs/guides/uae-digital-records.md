@@ -2,7 +2,7 @@
 
 > **Guide Origin**: Community | **ArcKit Version**: [VERSION]
 
-`/arckit-uae:uae-digital-records` generates a Digital Records Plan under the UAE Government Services Digital Records Policy. Captures the source-of-truth register per service, retention schedule, records-as-official-source designation, and lifecycle / disposal procedures.
+`/arckit:uae-digital-records` generates a Digital Records Plan under the UAE Government Services Digital Records Policy. Captures the source-of-truth register per service, retention schedule, records-as-official-source designation, and lifecycle / disposal procedures.
 
 ---
 
@@ -11,9 +11,9 @@
 | Artefact | Purpose |
 |----------|---------|
 | Requirements (`ARC-<id>-REQ-v1.0.md`) | Service scope and record-producing flows |
-| Data requirements (`ARC-<id>-DR-v1.0.md`) | Record categories collected |
-| Data model (`ARC-<id>-DMOD-v1.0.md`) | Entity-level ownership inputs |
-| Architecture (`ARC-<id>-ARCH-v1.0.md`) | Storage and lifecycle components |
+| Data requirements (`DR-*` in `ARC-<id>-REQ-v*.md`) | Record categories collected |
+| Data model (`ARC-<id>-DATA-v*.md`) | Entity-level ownership inputs |
+| Architecture (`diagrams/ARC-<id>-DIAG-*-v*.md`) | Storage and lifecycle components |
 | Smart Data Classification Register (`ARC-<id>-CLAS-v*.md`) | Sensitivity → retention rules |
 
 ---
@@ -21,7 +21,7 @@
 ## Command
 
 ```bash
-/arckit-uae:uae-digital-records <project ID or service name>
+/arckit:uae-digital-records <project ID or service name>
 ```
 
 Output: `projects/<id>/ARC-<id>-DREC-v1.0.md`
@@ -46,9 +46,9 @@ Output: `projects/<id>/ARC-<id>-DREC-v1.0.md`
 | Phase | Key Activities | ArcKit Commands |
 |-------|----------------|-----------------|
 | Inventory | Records produced and consumed | `/arckit:requirements`, `/arckit:data-model` |
-| Records | Source-of-truth + retention | `/arckit-uae:uae-digital-records` |
-| Sharing | Official-source feeds downstream shares | `/arckit-uae:uae-data-sharing` |
-| Compliance | PDPL retention reconciliation | `/arckit-uae:uae-pdpl` |
+| Records | Source-of-truth + retention | `/arckit:uae-digital-records` |
+| Sharing | Official-source feeds downstream shares | `/arckit:uae-data-sharing` |
+| Compliance | PDPL retention reconciliation | `/arckit:uae-pdpl` |
 
 ---
 
@@ -65,7 +65,7 @@ Output: `projects/<id>/ARC-<id>-DREC-v1.0.md`
 
 ## Key Notes
 
-- **Ownership ambiguity**: Cabinet Affairs vs National Archives ownership of the Digital Records Policy is flagged as `[NEEDS VERIFICATION]` in the overlay maintenance log — confirm the current authority before publication.
+- **Who owns the policy**: The UAE Cabinet approved the Government Services Digital Records Policy on 23 April 2026. The Cabinet's announcement (<https://uaecabinet.ae/en/news/under-directives-of-uae-president-and-in-world-first-mohammed-bin-rashid-reveals-new-uae-government-framework-to-deploy-agentic-ai-across-50-of-government-sectors-operations-within-two-years>) and the Dubai Media Office release carry the same text: the policy sets a national framework for managing government services data, makes digital records the official source of core data, and adds a comprehensive records guide. Neither announcement names an owner. The UAE Legislation Platform's entry for the policy (<https://uaelegislation.gov.ae/en/policy/details/government-services-digital-records-policy>) lists the **Prime Minister's Office** as lead entity, so the command records that and cites the entry. It does not attribute the policy to the Ministry of Cabinet Affairs or to the National Library and Archives. The entry also says each record's responsible entity is approved by Cabinet resolution and documented in a Records Catalog; the command records that entity per record type only when the entity has it in writing, and otherwise lists it as an open item for the entity's records or data office.
 - **Source-of-truth conflict**: If multiple systems claim the same record category, this command surfaces the conflict — resolve via ADR before sign-off.
 - **Run order**: Best after data model is stable so entity ownership inputs are available.
 - **Community-contributed**: Output should be reviewed by qualified records-management and federal compliance counsel before reliance.
