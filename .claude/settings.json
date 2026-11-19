@@ -1,4 +1,13 @@
 {
+  "extraKnownMarketplaces": {
+    "arckit-claude": {
+      "source": {
+        "source": "github",
+        "repo": "tractorjuice/arckit-claude"
+      },
+      "autoUpdate": true
+    }
+  },
   "enabledPlugins": {
     "arckit@arckit-claude": true
   }
